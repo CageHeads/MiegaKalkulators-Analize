@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Miega Rīks — Portfolio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root{
+      --bg0:#071026;
+      --bg1:#0b1733;
+      --bg2:#0b2a4a;
+      --text:#eaf2ff;
+      --muted:rgba(234,242,255,.72);
+      --muted2:rgba(234,242,255,.55);
+      --card:rgba(255,255,255,.08);
+      --card2:rgba(255,255,255,.10);
+      --stroke:rgba(255,255,255,.16);
+      --shadow: 0 22px 60px rgba(0,0,0,.45);
+      --shadow2: 0 10px 30px rgba(0,0,0,.35);
+      --accent:#6aa8ff;
+      --accent2:#8fd3ff;
+      --good:#7ee6b2;
+      --warn:#ffd57a;
+      --bad:#ff7a9c;
+      --focus: rgba(138,199,255,.35);
+      --radius: 22px;
+    }
+
+    body.light{
+      --bg0:#eef6ff;
+      --bg1:#f4f8ff;
+      --bg2:#e8f2ff;
+      --text:#0b1b33;
+      --muted:rgba(11,27,51,.75);
+      --muted2:rgba(11,27,51,.56);
+      --card:rgba(255,255,255,.65);
+      --card2:rgba(255,255,255,.78);
+      --stroke:rgba(11,27,51,.10);
+      --shadow: 0 20px 60px rgba(18,40,80,.18);
+      --shadow2: 0 10px 30px rgba(18,40,80,.14);
+      --accent:#2f7bff;
+      --accent2:#63b8ff;
+      --focus: rgba(47,123,255,.22);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 15% 10%, rgba(106,168,255,.35), transparent 60%),
+        radial-gradient(900px 650px at 80% 30%, rgba(143,211,255,.25), transparent 55%),
+        radial-gradient(900px 650px at 55% 90%, rgba(126,230,178,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1) 45%, var(--bg2));
+      overflow-x:hidden;
+      transition: background .35s ease, color .35s ease;
+    }
+
+    /* floating glass symbols background */
+    .bg-symbols{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      overflow:hidden;
+    }
+    .symbol{
+      position:absolute;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.16);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.18);
+      color: rgba(234,242,255,.85);
+      font-weight: 600;
+      letter-spacing:.2px;
+      mix-blend-mode: screen;
+      transform: translate3d(0,0,0);
+      opacity:.9;
+      animation: floaty var(--dur) ease-in-out infinite;
+      filter: saturate(1.05);
+    }
+    body.light .symbol{
+      color: rgba(11,27,51,.72);
+      mix-blend-mode: normal;
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(11,27,51,.10);
+      box-shadow: 0 10px 30px rgba(18,40,80,.10);
+    }
+    @keyframes floaty{
+      0%{ transform: translate3d(0,0,0) rotate(0deg); opacity:.55; }
+      50%{ transform: translate3d(var(--dx), var(--dy), 0) rotate(6deg); opacity:.95; }
+      100%{ transform: translate3d(0,0,0) rotate(0deg); opacity:.6; }
+    }
+
+    .wrap{
+      position:relative;
+      z-index:1;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 26px 18px 34px;
+    }
+
+    /* Top bar */
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom: 16px;
+    }
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .dot{
+      width: 14px; height:14px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, var(--accent2), var(--accent));
+      box-shadow: 0 0 0 6px rgba(106,168,255,.14);
+    }
+    .brand h1{
+      font-size: 15px;
+      margin:0;
+      font-weight:700;
+      letter-spacing:.2px;
+      color: var(--text);
+    }
+    .brand p{
+      margin:0;
+      font-size: 12px;
+      color: var(--muted2);
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    /* liquid glass buttons */
+    .btn{
+      position:relative;
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-weight:600;
+      transition: transform .18s ease, box-shadow .18s ease, background .25s ease, opacity .25s ease;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 10px 26px rgba(0,0,0,.18);
+      overflow:hidden;
+      user-select:none;
+    }
+    body.light .btn{
+      box-shadow: 0 10px 26px rgba(18,40,80,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.62));
+    }
+    .btn::before{
+      content:"";
+      position:absolute;
+      inset:-40% -10%;
+      background: radial-gradient(circle at 20% 30%, rgba(143,211,255,.35), transparent 55%),
+                  radial-gradient(circle at 70% 60%, rgba(106,168,255,.28), transparent 55%);
+      filter: blur(6px);
+      opacity:.9;
+      transform: translateX(-18%);
+      transition: transform .35s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); }
+    .btn:hover::before{ transform: translateX(0%); }
+    .btn:active{ transform: translateY(0px) scale(.99); opacity:.95; }
+    .btn .t{ position:relative; z-index:1; display:flex; align-items:center; gap:8px; }
+    .btn.primary{
+      border-color: rgba(106,168,255,.35);
+      box-shadow: 0 18px 40px rgba(106,168,255,.16), 0 10px 26px rgba(0,0,0,.18);
+    }
+    body.light .btn.primary{
+      box-shadow: 0 18px 40px rgba(47,123,255,.14), 0 10px 26px rgba(18,40,80,.12);
+    }
+
+    /* Hero */
+    .hero{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 18px;
+      margin-top: 10px;
+    }
+    @media (max-width: 920px){
+      .hero{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, var(--card2), var(--card));
+      border: 1px solid var(--stroke);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      overflow:hidden;
+      animation: fadeUp .8s ease both;
+    }
+
+    @keyframes fadeUp{
+      from{ opacity:0; transform: translateY(16px); }
+      to{ opacity:1; transform: translateY(0); }
+    }
+
+    .hero-left{
+      padding: 22px 22px 18px;
+    }
+    .kicker{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color: var(--muted);
+      font-weight:600;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .pill{
+      padding: 6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.08);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow2);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    body.light .pill{ background: rgba(255,255,255,.62); }
+
+    .title{
+      margin: 8px 0 10px;
+      font-size: 32px;
+      line-height: 1.15;
+      letter-spacing:-.7px;
+      font-weight: 800;
+    }
+    .desc{
+      margin:0 0 14px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+      max-width: 70ch;
+    }
+
+    .hero-right{
+      display:flex;
+      flex-direction:column;
+      gap:0;
+    }
+
+    .imgbox{
+      position:relative;
+      height: 100%;
+      min-height: 260px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 14px;
+    }
+    .imgbox img{
+      width: 100%;
+      max-width: 520px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: 0 22px 60px rgba(0,0,0,.28);
+      display:block;
+    }
+    body.light .imgbox img{
+      border: 1px solid rgba(11,27,51,.10);
+      box-shadow: 0 22px 60px rgba(18,40,80,.14);
+    }
+    .imgnote{
+      margin-top: 10px;
+      color: var(--muted2);
+      font-size: 12px;
+      text-align:center;
+      padding: 0 16px 16px;
+    }
+
+    /* Tabs */
+    .tabs{
+      margin-top: 18px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .tab{
+      border-radius: 999px;
+      padding: 10px 14px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      font-weight:700;
+      cursor:pointer;
+      transition: .22s ease;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow2);
+      user-select:none;
+    }
+    body.light .tab{ background: rgba(255,255,255,.55); }
+    .tab.active{
+      color: var(--text);
+      border-color: rgba(106,168,255,.35);
+      box-shadow: 0 18px 40px rgba(106,168,255,.14), var(--shadow2);
+      transform: translateY(-1px);
+    }
+
+    /* Content cards */
+    .content{
+      margin-top: 16px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 18px;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .content{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, var(--card2), var(--card));
+      border: 1px solid var(--stroke);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      padding: 18px;
+      animation: fadeUp .8s ease both;
+    }
+
+    .card h2{
+      margin: 0 0 10px;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing:-.2px;
+    }
+    .card p.small{
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height:1.55;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 620px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    label{
+      display:block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      margin: 10px 0 6px;
+    }
+
+    input, select{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.07);
+      color: var(--text);
+      outline:none;
+      transition: box-shadow .2s ease, border-color .2s ease, background .2s ease;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    body.light input, body.light select{
+      background: rgba(255,255,255,.70);
+    }
+    input:focus, select:focus{
+      border-color: rgba(106,168,255,.45);
+      box-shadow: 0 0 0 6px var(--focus);
+    }
+    input[type="number"]{ appearance:textfield; }
+
+    .row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+
+    .chip{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow2);
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 12px;
+    }
+    body.light .chip{ background: rgba(255,255,255,.58); }
+
+    .switch{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .switch input{ width:auto; }
+    .switch .txt{ font-size: 12px; font-weight:800; color: var(--muted); }
+
+    .msg{
+      margin-top: 12px;
+      border-radius: 16px;
+      padding: 12px 12px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow2);
+      display:none;
+      animation: fadeUp .45s ease both;
+    }
+    body.light .msg{ background: rgba(255,255,255,.62); }
+
+    .msg.good{ border-color: rgba(126,230,178,.35); }
+    .msg.warn{ border-color: rgba(255,213,122,.35); }
+    .msg.bad{ border-color: rgba(255,122,156,.35); }
+
+    .msg h3{
+      margin: 0 0 8px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing:-.2px;
+      color: var(--text);
+    }
+    .msg ul{
+      margin: 8px 0 0 18px;
+      padding:0;
+      color: var(--muted);
+      line-height:1.6;
+      font-size: 13px;
+    }
+
+    .divider{
+      height:1px;
+      background: rgba(255,255,255,.10);
+      margin: 14px 0;
+    }
+    body.light .divider{ background: rgba(11,27,51,.08); }
+
+    .minihelp{
+      font-size: 12px;
+      color: var(--muted2);
+      margin-top: 6px;
+      line-height:1.45;
+    }
+
+    .days{
+      display:none;
+      gap: 8px;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .day{
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      font-weight:800;
+      font-size: 12px;
+      cursor:pointer;
+      user-select:none;
+      transition:.2s ease;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--shadow2);
+    }
+    body.light .day{ background: rgba(255,255,255,.58); }
+    .day.on{
+      color: var(--text);
+      border-color: rgba(106,168,255,.40);
+      box-shadow: 0 18px 40px rgba(106,168,255,.12), var(--shadow2);
+      transform: translateY(-1px);
+    }
+
+    .subgrid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .table{
+      width: 100%;
+      border-collapse: collapse;
+      overflow:hidden;
+      border-radius: 16px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--shadow2);
+    }
+    body.light .table{ background: rgba(255,255,255,.62); }
+    .table th, .table td{
+      padding: 10px 10px;
+      font-size: 12px;
+      text-align:left;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      color: var(--muted);
+    }
+    body.light .table th, body.light .table td{
+      border-bottom: 1px solid rgba(11,27,51,.06);
+    }
+    .table th{ color: var(--text); font-weight: 900; }
+    .note{
+      margin-top: 10px;
+      font-size: 11.5px;
+      color: var(--muted2);
+      line-height:1.5;
+    }
+
+    /* Section switching */
+    .view{
+      display:none;
+      opacity:0;
+      transform: translateY(10px);
+      transition: opacity .35s ease, transform .35s ease;
+    }
+    .view.active{
+      display:block;
+      opacity:1;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    footer{
+      margin: 34px 0 10px;
+      text-align:center;
+      opacity:.98;
+      animation: fadeUp .8s ease both;
+    }
+    .footer-big{
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing:-.8px;
+      color: var(--text);
+      margin: 0 0 6px;
+    }
+    .footer-small{
+      font-size: 13px;
+      color: var(--muted2);
+      margin: 0;
+      font-weight: 700;
+    }
+
+    /* Inline validation */
+    .field-error{
+      display:none;
+      margin-top:8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,122,156,.35);
+      background: rgba(255,122,156,.10);
+      color: var(--muted);
+      font-size: 12px;
+      line-height:1.45;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--shadow2);
+      animation: fadeUp .45s ease both;
+    }
+    body.light .field-error{
+      background: rgba(255,122,156,.12);
+    }
+
+    /* Chart container */
+    .chartWrap{
+      padding: 12px;
+      border-radius: 18px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--shadow2);
+    }
+    body.light .chartWrap{ background: rgba(255,255,255,.62); }
+  </style>
+</head>
+
+<body>
+  <div class="bg-symbols" id="bgSymbols"></div>
+
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="dot"></div>
+        <div>
+          <h1>Miega pašnovērtējums</h1>
+          <p>UX validated • Glassmorphism • LocalStorage</p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="themeBtn" type="button">
+          <span class="t">🌙 <span id="themeTxt">Nakts režīms</span></span>
+        </button>
+        <button class="btn primary" id="saveBtn" type="button">
+          <span class="t">💾 Saglabāt</span>
+        </button>
+        <button class="btn" id="resetBtn" type="button">
+          <span class="t">♻️ Atiestatīt</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="panel hero-left">
+        <div class="kicker">
+          <span class="pill">MVP → Portfolio</span>
+          <span class="pill">8–10h ieteikums</span>
+          <span class="pill">Skolas ritms</span>
+        </div>
+
+        <div class="title">Palīdzi sev gulēt labāk — ar saprotamu analīzi un konkrētiem soļiem.</div>
+        <p class="desc">
+          Šeit vari (1) novērtēt savu miegu, (2) redzēt personalizētus ieteikumus un (3) aprēķināt,
+          cikos jāiet gulēt, lai pamostos vajadzīgajā laikā. Dati paliek pie tevis (LocalStorage).
+        </p>
+
+        <div class="tabs">
+          <div class="tab active" data-tab="analysis">🧠 Miega analīze</div>
+          <div class="tab" data-tab="calculator">🧮 Miega kalkulators</div>
+        </div>
+      </div>
+
+      <div class="panel hero-right">
+        <div class="imgbox">
+         <img
+src="https://res.cloudinary.com/dg6origio/image/upload/f_auto,q_auto,w_1200/v1772381153/schoolsleep_tlzdfv.png"
+alt="Miega ilustrācija"
+loading="lazy"
+decoding="async"
+onerror="this.style.display='none'; document.getElementById('imgFallback').style.display='block';"
+>
+
+<div id="imgFallback" style="display:none; text-align:center; padding:20px;">
+Attēlu neizdevās ielādēt
+</div>
+            </div>
+          </div>
+        </div>
+        <div class="imgnote"></div>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- LEFT: Main view -->
+      <div class="card">
+        <!-- VIEW: ANALYSIS -->
+        <div class="view active" id="view-analysis">
+          <h2>Miega analīze</h2>
+          <p class="small">Ievadi savu grafiku un sajūtas. Sistēma validē “neiespējamas” situācijas un piedāvā drošus ieteikumus.</p>
+
+          <div class="grid">
+            <div>
+              <label>Gulētiešanas laiks</label>
+              <input type="time" id="a_sleep" step="60" />
+              <div class="minihelp">Formāts: HH:MM (minūtes automātiski 00–59).</div>
+            </div>
+            <div>
+              <label>Celšanās laiks</label>
+              <input type="time" id="a_wake" step="60" />
+              <div class="minihelp">Ja celies nākamajā dienā, tas tiek ņemts vērā automātiski.</div>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <label>Kurām dienām šis grafiks attiecas?</label>
+              <select id="a_schedule">
+                <option value="weekdays">Darba dienas (P–Pk)</option>
+                <option value="weekends">Brīvdienas (S–Sv)</option>
+                <option value="custom">Pielāgots (izvēlēties dienas)</option>
+              </select>
+
+              <div class="days" id="a_days">
+                <div class="day" data-day="P">P</div>
+                <div class="day" data-day="O">O</div>
+                <div class="day" data-day="T">T</div>
+                <div class="day" data-day="C">C</div>
+                <div class="day" data-day="Pk">Pk</div>
+                <div class="day" data-day="S">S</div>
+                <div class="day" data-day="Sv">Sv</div>
+              </div>
+
+              <div class="minihelp">Padoms: bieži brīvdienās guļ ilgāk — tas nav “slikti”, bet pārlieku liela atšķirība var sabojāt režīmu.</div>
+            </div>
+
+            <div>
+              <label>Cik dienas pēdējās 7 dienās jūties noguris?</label>
+              <input type="number" id="a_tiredDays" min="0" max="7" placeholder="0–7" />
+              <div class="minihelp">0–2: ok • 3–5: uzmanīgi • 6–7: visticamāk problēma ar miegu/slodzi</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <label class="switch">
+              <input type="checkbox" id="a_sport"/>
+              <span class="txt">Nodarbojos ar sportu/treniņiem</span>
+            </label>
+
+            <label class="switch">
+              <input type="checkbox" id="a_screen"/>
+              <span class="txt">Lietoju ekrānus pēdējā stundā pirms miega</span>
+            </label>
+          </div>
+
+          <div class="field-error" id="a_error"></div>
+
+          <div class="row" style="margin-top:14px;">
+            <button class="btn primary" id="a_run" type="button">
+              <span class="t">✨ Analizēt miegu</span>
+            </button>
+          </div>
+
+          <div class="msg" id="a_result"></div>
+
+          <div class="divider"></div>
+
+          <div class="chartWrap">
+            <h2 style="margin:0 0 10px;">Miega grafiks (tava vēsture)</h2>
+            <p class="small">Grafikā redzami pēdējie aprēķini (saglabājas LocalStorage).</p>
+            <canvas id="sleepChart" height="130"></canvas>
+          </div>
+        </div>
+
+        <!-- VIEW: CALCULATOR -->
+        <div class="view" id="view-calculator">
+          <h2>Miega kalkulators</h2>
+          <p class="small">Aprēķini, cikos jāiet gulēt, lai pamostos vajadzīgajā laikā (ņemot vērā ieteikto miega ilgumu).</p>
+
+          <div class="grid">
+            <div>
+              <label>Kad tev jāmostas?</label>
+              <input type="time" id="c_wake" step="60" />
+              <div class="minihelp">Piemērs: 06:30</div>
+            </div>
+            <div>
+              <label>Vēlamais miega ilgums (stundas)</label>
+              <select id="c_target">
+                <option value="8">8h</option>
+                <option value="8.5" selected>8.5h</option>
+                <option value="9">9h</option>
+                <option value="9.5">9.5h</option>
+                <option value="10">10h</option>
+              </select>
+              <div class="minihelp">Pusaudžiem parasti iesaka 8–10h.</div>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <label>Kurām dienām plāno šo režīmu?</label>
+              <select id="c_schedule">
+                <option value="weekdays">Darba dienas (P–Pk)</option>
+                <option value="weekends">Brīvdienas (S–Sv)</option>
+                <option value="custom">Pielāgots (izvēlēties dienas)</option>
+              </select>
+
+              <div class="days" id="c_days">
+                <div class="day" data-day="P">P</div>
+                <div class="day" data-day="O">O</div>
+                <div class="day" data-day="T">T</div>
+                <div class="day" data-day="C">C</div>
+                <div class="day" data-day="Pk">Pk</div>
+                <div class="day" data-day="S">S</div>
+                <div class="day" data-day="Sv">Sv</div>
+              </div>
+
+              <div class="minihelp">Padoms: ja darba dienā jāceļas agrāk, labāk “piebīdīt” gulētiešanu pakāpeniski.</div>
+            </div>
+
+            <div>
+              <label class="switch" style="margin-top: 28px;">
+                <input type="checkbox" id="c_sport"/>
+                <span class="txt">Ir treniņš šajā dienā</span>
+              </label>
+              <label class="switch" style="margin-top: 12px;">
+                <input type="checkbox" id="c_screen"/>
+                <span class="txt">Ekrāni pirms miega (parasti)</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="field-error" id="c_error"></div>
+
+          <div class="row" style="margin-top:14px;">
+            <button class="btn primary" id="c_run" type="button">
+              <span class="t">🧮 Aprēķināt gulētiešanu</span>
+            </button>
+          </div>
+
+          <div class="msg" id="c_result"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Reference + presentation -->
+      <div class="card">
+        <h2>Orientējošā tabula: skolēna miegs</h2>
+        <p class="small">
+          Šī tabula ir <b>orientējoša</b> un domāta UX demonstrācijai (nav oficiāla statistika).
+          Ieteikums pusaudžiem bieži ir 8–10 stundas.
+        </p>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Grupa</th>
+              <th>Orientējoši (h)</th>
+              <th>Piezīme</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>14–18 gadi</td>
+              <td>8–10</td>
+              <td>Ieteicamais diapazons</td>
+            </tr>
+            <tr>
+              <td>“Bieži ikdienā”</td>
+              <td>7–8</td>
+              <td>Daudziem sanāk mazāk slodzes dēļ</td>
+            </tr>
+            <tr>
+              <td>Riska zona</td>
+              <td>&lt; 7</td>
+              <td>Biežāk nogurums, koncentrēšanās kritums</td>
+            </tr>
+            <tr>
+              <td>Īpaši neparasti</td>
+              <td>&gt; 11</td>
+              <td>Jāpievērš uzmanība pašsajūtai</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="note">
+          Ja miegs ir ļoti garš vai ļoti īss un tas turpinās, ir vērts parunāt ar speciālistu
+          (ārstu, psihologu), īpaši, ja ir pastāvīgs nogurums, trauksme vai nomāktība.
+        </div>
+
+        <div class="divider"></div>
+
+        <h2>Projekta 1.–5. posms (īsi)</h2>
+        <div class="subgrid">
+          <div class="chip">1) Prasību analīze — reāla jauniešu miega problēma</div>
+          <div class="chip">2) Projektēšana — vienkārša plūsma + ieteikums</div>
+          <div class="chip">3) Izstrāde — MVP aprēķins + rezultāts</div>
+          <div class="chip">4) Testēšana — precizēts teksts un loģika</div>
+          <div class="chip">5) Ieviešana — izmantošana skolā / veselības nedēļā</div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p class="footer-big">Made for you to sleep better..</p>
+      <p class="footer-small">Haralds LIzdiks &amp; Rems Sharovs</p>
+    </footer>
+  </div>
+
+  <script>
+    /* -----------------------------
+       Background glass symbols
+    ------------------------------ */
+    const SYMBOLS = ["Zzz", "😴", "🌙", "🛏️", "📚", "💤", "⏰", "miegs?", "⭐", "☁️", "nakts", "klusums"];
+    const bg = document.getElementById("bgSymbols");
+
+    function rand(min, max){ return Math.random()*(max-min)+min; }
+
+    function createSymbols(){
+      bg.innerHTML = "";
+      const count = 14;
+      for(let i=0;i<count;i++){
+        const s = document.createElement("div");
+        s.className = "symbol";
+        s.textContent = SYMBOLS[i % SYMBOLS.length];
+        const x = rand(0, 92);
+        const y = rand(0, 92);
+        const dx = rand(-28, 28).toFixed(1) + "px";
+        const dy = rand(-34, 34).toFixed(1) + "px";
+        const dur = rand(6.5, 11.5).toFixed(1) + "s";
+        s.style.left = x + "vw";
+        s.style.top = y + "vh";
+        s.style.setProperty("--dx", dx);
+        s.style.setProperty("--dy", dy);
+        s.style.setProperty("--dur", dur);
+        s.style.fontSize = rand(12, 16).toFixed(0) + "px";
+        s.style.opacity = rand(.55,.95).toFixed(2);
+        bg.appendChild(s);
+      }
+    }
+    createSymbols();
+    window.addEventListener("resize", () => createSymbols());
+
+    /* -----------------------------
+       Theme toggle + persistence
+    ------------------------------ */
+    const LS_KEY = "sleep_portfolio_v1";
+    const themeBtn = document.getElementById("themeBtn");
+    const themeTxt = document.getElementById("themeTxt");
+    function setTheme(mode){
+      document.body.classList.toggle("light", mode === "light");
+      themeTxt.textContent = mode === "light" ? "Gaišais režīms" : "Nakts režīms";
+    }
+
+    /* -----------------------------
+       Tabs switching
+    ------------------------------ */
+    const tabs = document.querySelectorAll(".tab");
+    const viewAnalysis = document.getElementById("view-analysis");
+    const viewCalculator = document.getElementById("view-calculator");
+
+    function showView(which){
+      tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === which));
+      viewAnalysis.classList.toggle("active", which === "analysis");
+      viewCalculator.classList.toggle("active", which === "calculator");
+      saveState({ activeTab: which });
+    }
+
+    tabs.forEach(t=>{
+      t.addEventListener("click", () => showView(t.dataset.tab));
+    });
+
+    /* -----------------------------
+       Day selectors
+    ------------------------------ */
+    function bindDaySelector(container){
+      const days = container.querySelectorAll(".day");
+      days.forEach(d=>{
+        d.addEventListener("click", ()=>{
+          d.classList.toggle("on");
+        });
+      });
+      return () => [...days].filter(d=>d.classList.contains("on")).map(d=>d.dataset.day);
+    }
+
+    const aDaysWrap = document.getElementById("a_days");
+    const cDaysWrap = document.getElementById("c_days");
+    const getADays = bindDaySelector(aDaysWrap);
+    const getCDays = bindDaySelector(cDaysWrap);
+
+    const aSchedule = document.getElementById("a_schedule");
+    const cSchedule = document.getElementById("c_schedule");
+
+    function scheduleUI(selectEl, daysEl){
+      const v = selectEl.value;
+      daysEl.style.display = (v === "custom") ? "flex" : "none";
+    }
+    aSchedule.addEventListener("change", ()=> scheduleUI(aSchedule, aDaysWrap));
+    cSchedule.addEventListener("change", ()=> scheduleUI(cSchedule, cDaysWrap));
+
+    /* -----------------------------
+       Helpers: time validation + diff
+    ------------------------------ */
+    function parseTimeStr(t){
+      // Strict HH:MM 00-23, 00-59
+      if(typeof t !== "string") return null;
+      const m = t.match(/^([01]\d|2[0-3]):([0-5]\d)$/);
+      if(!m) return null;
+      const hh = Number(m[1]);
+      const mm = Number(m[2]);
+      return hh*60 + mm;
+    }
+
+    function minutesToHHMM(mins){
+      mins = ((mins % (24*60)) + (24*60)) % (24*60);
+      const hh = String(Math.floor(mins/60)).padStart(2,"0");
+      const mm = String(mins%60).padStart(2,"0");
+      return `${hh}:${mm}`;
+    }
+
+    function calcSleepHours(sleepMin, wakeMin){
+      // if wake <= sleep => next day
+      let diff = wakeMin - sleepMin;
+      if(diff <= 0) diff += 24*60;
+      return diff / 60;
+    }
+
+    function showFieldError(el, text){
+      el.textContent = text;
+      el.style.display = "block";
+    }
+    function clearFieldError(el){
+      el.textContent = "";
+      el.style.display = "none";
+    }
+
+    function showMsg(el, type, title, html){
+      el.className = `msg ${type}`;
+      el.style.display = "block";
+      el.innerHTML = `
+        <h3>${title}</h3>
+        <div style="color:var(--muted); font-size:13px; line-height:1.6;">${html}</div>
+      `;
+    }
+
+    /* -----------------------------
+       Sport + sleep quality tips
+    ------------------------------ */
+    function buildQualityTips({tiredDays, screens, sport}){
+      const tips = [];
+
+      tips.push("Uzturi vienādu gulētiešanas laiku (±30 min) vismaz 5 dienas — ķermenim patīk ritms.");
+      if(screens) tips.push("Samazini ekrāna laiku 60 min pirms miega (vai ieslēdz “Night Shift/Blue light filter”).");
+      tips.push("Telpu atdzesē (~18–20°C) un nomaini spilgtu gaismu uz siltu, klusāku apgaismojumu.");
+      tips.push("Kofeīnu (enerģijas dzērieni/kafija) centies nelietot pēcpusdienā/vakarā.");
+
+      if(sport){
+        tips.push("Pēc treniņa: 5–10 min viegla staipīšanās + silta duša, lai atslābinātu muskuļus.");
+        tips.push("Ja treniņš ir vēlu vakarā, izvēlies vieglāku intensitāti vai pārnes agrāk, ja iespējams.");
+      }
+
+      if(tiredDays >= 6){
+        tips.push("Nogurums gandrīz katru dienu: pamēģini sakārtot 2 lietas uzreiz — laiku gulēt + ekrānu ierobežojumu (5 dienas pēc kārtas).");
+      } else if(tiredDays >= 3){
+        tips.push("Nogurums bieži: pamēģini 30 min agrāk iet gulēt un atzīmē sajūtas 5 dienas.");
+      } else {
+        tips.push("Ja nogurums ir rets, turpini uzturēt režīmu un sargā miega kvalitāti.");
+      }
+
+      return tips;
+    }
+
+    /* -----------------------------
+       Analysis logic (portfolio UX)
+    ------------------------------ */
+    const aSleep = document.getElementById("a_sleep");
+    const aWake = document.getElementById("a_wake");
+    const aTiredDays = document.getElementById("a_tiredDays");
+    const aSport = document.getElementById("a_sport");
+    const aScreen = document.getElementById("a_screen");
+    const aRun = document.getElementById("a_run");
+    const aError = document.getElementById("a_error");
+    const aResult = document.getElementById("a_result");
+
+    function getSelectedDays(scheduleValue, getCustomDaysFn){
+      if(scheduleValue === "weekdays") return ["P","O","T","C","Pk"];
+      if(scheduleValue === "weekends") return ["S","Sv"];
+      const custom = getCustomDaysFn();
+      return custom.length ? custom : ["(nav izvēlēts)"];
+    }
+
+    function analysis(){
+      clearFieldError(aError);
+      aResult.style.display = "none";
+
+      const sleepStr = aSleep.value;
+      const wakeStr = aWake.value;
+      const tired = Number(aTiredDays.value ?? "");
+      const tiredValid = Number.isFinite(tired) && tired >= 0 && tired <= 7;
+
+      const sleepMin = parseTimeStr(sleepStr);
+      const wakeMin = parseTimeStr(wakeStr);
+
+      if(sleepMin === null || wakeMin === null){
+        showFieldError(aError, "Lūdzu ievadi korektus laikus (HH:MM).");
+        return;
+      }
+      if(sleepMin === wakeMin){
+        showFieldError(aError, "Gulētiešanas un celšanās laiks nevar būt vienāds. Lūdzu pārbaudi ievadi.");
+        return;
+      }
+      if(!tiredValid){
+        showFieldError(aError, "Noguruma dienu skaitam jābūt 0–7.");
+        return;
+      }
+
+      const hours = calcSleepHours(sleepMin, wakeMin);
+
+      // “Neiespējami / ļoti neparasti” scenāriji ar UX jautājumiem
+      const days = getSelectedDays(aSchedule.value, getADays);
+      const sport = aSport.checked;
+      const screens = aScreen.checked;
+
+      const tips = buildQualityTips({tiredDays:tired, screens, sport});
+      const tipsHtml = `<ul>${tips.map(t=>`<li>${t}</li>`).join("")}</ul>`;
+
+      // If >16 hours: ask health + doctor recommendation
+      if(hours > 16){
+        const html = `
+          <div><b>Tavs aprēķinātais miegs:</b> ${hours.toFixed(1)}h — tas ir ļoti neparasti ikdienai.</div>
+          <div style="margin-top:10px;">
+            <div class="chip" style="margin-bottom:10px;">🩺 UX pārbaude</div>
+            <div style="color:var(--muted); font-size:13px; line-height:1.6;">
+              Vai pēdējā laikā jūties vesels un neesi nesen slimojis?
+              Ja šāds miega ilgums atkārtojas vai ir stiprs nogurums, ieteicams aprunāties ar ģimenes ārstu.
+            </div>
+          </div>
+          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn" type="button" id="healthYes"><span class="t">✅ Jūtos vesels</span></button>
+            <button class="btn" type="button" id="healthNo"><span class="t">🤒 Nesen slimoju / nejūtos labi</span></button>
+          </div>
+          <div id="healthAnswer" style="margin-top:12px;"></div>
+        `;
+        showMsg(aResult, "bad", "Ļoti neparasts miega ilgums", html);
+
+        // bind inline buttons
+        setTimeout(()=>{
+          const yes = document.getElementById("healthYes");
+          const no = document.getElementById("healthNo");
+          const out = document.getElementById("healthAnswer");
+          if(yes && no && out){
+            yes.onclick = () => {
+              out.innerHTML = `
+                <div class="chip">ℹ️ Ieteikums</div>
+                <div style="margin-top:8px; color:var(--muted); line-height:1.6;">
+                  Ja jūties vesels, bet miegs bieži ir tik garš un nogurums nepāriet, tas var norādīt uz miega kvalitātes problēmām,
+                  pārslogojumu vai veselības faktoriem. <b>Ieteikums:</b> aprunājies ar ģimenes ārstu, īpaši, ja ir galvassāpes,
+                  pastāvīgs nogurums vai mācībās krīt koncentrēšanās.
+                </div>
+                <div style="margin-top:10px;">${tipsHtml}</div>
+              `;
+            };
+            no.onclick = () => {
+              out.innerHTML = `
+                <div class="chip">🩺 Ieteikums</div>
+                <div style="margin-top:8px; color:var(--muted); line-height:1.6;">
+                  Pēc slimošanas ķermenim var vajadzēt vairāk miega. Ja nogurums ir spēcīgs vai ilgstošs,
+                  <b>ieteicams sazināties ar ārstu</b> un pārbaudīt veselību (dzelzs, D vitamīns, stress u.c.).
+                </div>
+                <div style="margin-top:10px;">${tipsHtml}</div>
+              `;
+            };
+          }
+        }, 0);
+
+        pushHistory(hours);
+        return;
+      }
+
+      // If >11 hours: ask mental well-being + psychologist recommendation
+      if(hours > 11){
+        const html = `
+          <div><b>Tavs aprēķinātais miegs:</b> ${hours.toFixed(1)}h — tas ir vairāk nekā parasti.</div>
+          <div style="margin-top:10px;">
+            <div class="chip" style="margin-bottom:10px;">🧠 UX pārbaude</div>
+            <div style="color:var(--muted); font-size:13px; line-height:1.6;">
+              Vai pēdējā laikā dzīvē viss ir kārtībā? Vai nav ilgstoša nomāktība, trauksme vai motivācijas kritums?
+              Ja šāds stāvoklis turpinās, ieteicams parunāt ar skolas psihologu vai speciālistu.
+            </div>
+          </div>
+          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn" type="button" id="mindOk"><span class="t">✅ Viss ok</span></button>
+            <button class="btn" type="button" id="mindNotOk"><span class="t">🫤 Ne īsti</span></button>
+          </div>
+          <div id="mindAnswer" style="margin-top:12px;"></div>
+        `;
+        showMsg(aResult, "warn", "Ļoti garš miegs — pārbaudi pašsajūtu", html);
+
+        setTimeout(()=>{
+          const ok = document.getElementById("mindOk");
+          const notOk = document.getElementById("mindNotOk");
+          const out = document.getElementById("mindAnswer");
+          if(ok && notOk && out){
+            ok.onclick = () => {
+              out.innerHTML = `
+                <div class="chip">ℹ️ Ieteikums</div>
+                <div style="margin-top:8px; color:var(--muted); line-height:1.6;">
+                  Ja pašsajūta ir laba, garš miegs dažreiz ir “atgūšanās” pēc slodzes. Skaties, vai tas atkārtojas regulāri.
+                  Ja nogurums nepāriet, pamēģini uzlabot miega kvalitāti (ekrāni, režīms, telpa).
+                </div>
+                <div style="margin-top:10px;">${tipsHtml}</div>
+              `;
+            };
+            notOk.onclick = () => {
+              out.innerHTML = `
+                <div class="chip">🧠 Ieteikums</div>
+                <div style="margin-top:8px; color:var(--muted); line-height:1.6;">
+                  Ja ir nomāktība, stress vai motivācijas kritums, miegs var mainīties.
+                  <b>Ieteicams parunāt ar skolas psihologu</b> vai uzticamu pieaugušo. Tu neesi viens.
+                </div>
+                <div style="margin-top:10px;">${tipsHtml}</div>
+              `;
+            };
+          }
+        }, 0);
+
+        pushHistory(hours);
+        return;
+      }
+
+      // Normal ranges
+      let type = "good";
+      let title = "Rezultāts";
+      let headline = `<b>Tu guli apmēram:</b> ${hours.toFixed(1)}h.`;
+      let delta = "";
+      if(hours < 8){
+        type = "warn";
+        title = "Par maz miega";
+        delta = `Tas ir apmēram <b>${(8 - hours).toFixed(1)}h</b> mazāk nekā minimālais ieteikums (8h).`;
+      } else if(hours <= 10){
+        type = "good";
+        title = "Optimāls miegs";
+        delta = "Tas iekļaujas ieteiktajā diapazonā (8–10h).";
+      } else {
+        type = "warn";
+        title = "Vairāk par ieteikumu";
+        delta = "Tas ir virs 10h — pievērs uzmanību pašsajūtai un miega kvalitātei.";
+      }
+
+      const scheduleText = (aSchedule.value === "custom")
+        ? `Pielāgotas dienas: <b>${days.join(", ")}</b>`
+        : (aSchedule.value === "weekdays" ? "Grafiks: <b>Darba dienas</b>" : "Grafiks: <b>Brīvdienas</b>");
+
+      const sportLine = sport
+        ? `<div class="chip">🏃 Sports: iesakām pēc treniņa staipīties + silta duša (ja pēc miega joprojām nogurums).</div>`
+        : `<div class="chip">✅ Sports nav atzīmēts</div>`;
+
+      const tiredLine = `<div class="chip">🧩 Noguruma dienas (0–7): <b>${tired}</b></div>`;
+
+      let extra = "";
+      if(hours < 8 && tired >= 3){
+        extra = `
+          <div style="margin-top:10px; color:var(--muted); line-height:1.6;">
+            Tā kā miegs ir zem 8h un nogurums ir biežs, pamēģini šo “mini plānu”:
+            <b>5 dienas</b> pēc kārtas ej gulēt <b>30 min agrāk</b> + <b>1h bez ekrāna</b> pirms miega.
+          </div>
+        `;
+      } else if(hours >= 8 && tired >= 6){
+        extra = `
+          <div style="margin-top:10px; color:var(--muted); line-height:1.6;">
+            Tu guli pietiekami, bet nogurums ir ļoti biežs. Tas var norādīt uz <b>miega kvalitāti</b>, stresu vai pārslogojumu.
+            Pamēģini uzlabot kvalitāti (zemāk) un, ja nekas nemainās, parunā ar speciālistu.
+          </div>
+        `;
+      }
+
+      const html = `
+        <div>${headline}</div>
+        <div style="margin-top:6px; color:var(--muted);">${delta}</div>
+
+        <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+          ${tiredLine}
+          ${sportLine}
+          <div class="chip">📅 ${scheduleText}</div>
+        </div>
+
+        ${extra}
+
+        <div style="margin-top:12px;">
+          <div class="chip">✅ Ieteikumi miega kvalitātei</div>
+          ${tipsHtml}
+        </div>
+      `;
+
+      showMsg(aResult, type, title, html);
+      pushHistory(hours);
+    }
+
+    aRun.addEventListener("click", analysis);
+
+    /* -----------------------------
+       Calculator logic
+    ------------------------------ */
+    const cWake = document.getElementById("c_wake");
+    const cTarget = document.getElementById("c_target");
+    const cSport = document.getElementById("c_sport");
+    const cScreen = document.getElementById("c_screen");
+    const cRun = document.getElementById("c_run");
+    const cError = document.getElementById("c_error");
+    const cResult = document.getElementById("c_result");
+
+    function calculator(){
+      clearFieldError(cError);
+      cResult.style.display = "none";
+
+      const wakeStr = cWake.value;
+      const wakeMin = parseTimeStr(wakeStr);
+      if(wakeMin === null){
+        showFieldError(cError, "Lūdzu ievadi korektu celšanās laiku (HH:MM).");
+        return;
+      }
+
+      const target = Number(cTarget.value);
+      if(!Number.isFinite(target) || target < 6 || target > 12){
+        showFieldError(cError, "Vēlamajam miegam jābūt saprātīgā diapazonā.");
+        return;
+      }
+
+      const days = getSelectedDays(cSchedule.value, getCDays);
+      const bedtimeMin = wakeMin - Math.round(target * 60);
+      const bedtime = minutesToHHMM(bedtimeMin);
+
+      const sport = cSport.checked;
+      const screens = cScreen.checked;
+      const tips = buildQualityTips({tiredDays: 3, screens, sport}); // tips based on context
+      const tipsHtml = `<ul>${tips.slice(0,5).map(t=>`<li>${t}</li>`).join("")}</ul>`;
+
+      const scheduleText = (cSchedule.value === "custom")
+        ? `Pielāgotas dienas: <b>${days.join(", ")}</b>`
+        : (cSchedule.value === "weekdays" ? "Grafiks: <b>Darba dienas</b>" : "Grafiks: <b>Brīvdienas</b>");
+
+      let extraSport = "";
+      if(sport){
+        extraSport = `
+          <div class="chip" style="margin-top:10px;">🏃 Ja pēc miega joprojām jūties noguris: 5–10 min staipīšanās + silta duša pēc treniņa.</div>
+        `;
+      }
+
+      const html = `
+        <div><b>Lai pamostos</b> ${wakeStr} un gulētu <b>${target}h</b>, ieteicams iet gulēt ap:</div>
+        <div style="margin-top:10px; font-size:26px; font-weight:900; letter-spacing:-.6px; color:var(--text);">
+          ${bedtime}
+        </div>
+        <div style="margin-top:8px; color:var(--muted);">${scheduleText}</div>
+        ${extraSport}
+
+        <div style="margin-top:12px;">
+          <div class="chip">✨ Kvalitātes ieteikumi (īsi)</div>
+          ${tipsHtml}
+        </div>
+      `;
+
+      showMsg(cResult, "good", "Tavs miega plāns", html);
+    }
+
+    cRun.addEventListener("click", calculator);
+
+    /* -----------------------------
+       Chart + history (LocalStorage)
+    ------------------------------ */
+    let chart;
+    function initChart(values){
+      const ctx = document.getElementById("sleepChart").getContext("2d");
+      if(chart) chart.destroy();
+
+      const labels = values.map((_,i)=> `#${i+1}`);
+      chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: "Tavs miegs (h)",
+              data: values,
+              tension: 0.35,
+              fill: true
+            },
+            {
+              label: "Ieteicamais minimums (8h)",
+              data: values.map(_=>8),
+              tension: 0.0,
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              labels: { color: getComputedStyle(document.body).getPropertyValue("--muted") }
+            }
+          },
+          scales: {
+            x: { ticks: { color: getComputedStyle(document.body).getPropertyValue("--muted2") }, grid: { color: "rgba(255,255,255,.06)" } },
+            y: { ticks: { color: getComputedStyle(document.body).getPropertyValue("--muted2") }, grid: { color: "rgba(255,255,255,.06)" }, suggestedMin: 4, suggestedMax: 12 }
+          }
+        }
+      });
+    }
+
+    function pushHistory(hours){
+      const state = loadState();
+      const hist = Array.isArray(state.history) ? state.history : [];
+      hist.push(Number(hours.toFixed(2)));
+      while(hist.length > 10) hist.shift();
+      saveState({ history: hist });
+      initChart(hist);
+    }
+
+    /* -----------------------------
+       LocalStorage state
+    ------------------------------ */
+    function loadState(){
+      try{
+        return JSON.parse(localStorage.getItem(LS_KEY) || "{}");
+      }catch{ return {}; }
+    }
+    function saveState(patch){
+      const cur = loadState();
+      const next = { ...cur, ...patch };
+      localStorage.setItem(LS_KEY, JSON.stringify(next));
+      return next;
+    }
+
+    function applyState(){
+      const st = loadState();
+
+      if(st.theme) setTheme(st.theme);
+      else setTheme("dark");
+
+      if(st.activeTab) showView(st.activeTab);
+
+      // analysis fields
+      if(st.a_sleep) aSleep.value = st.a_sleep;
+      if(st.a_wake) aWake.value = st.a_wake;
+      if(typeof st.a_tiredDays !== "undefined") aTiredDays.value = st.a_tiredDays;
+      if(typeof st.a_sport !== "undefined") aSport.checked = st.a_sport;
+      if(typeof st.a_screen !== "undefined") aScreen.checked = st.a_screen;
+      if(st.a_schedule) aSchedule.value = st.a_schedule;
+      scheduleUI(aSchedule, aDaysWrap);
+      if(Array.isArray(st.a_days)){
+        [...aDaysWrap.querySelectorAll(".day")].forEach(d=>{
+          d.classList.toggle("on", st.a_days.includes(d.dataset.day));
+        });
+      }
+
+      // calculator fields
+      if(st.c_wake) cWake.value = st.c_wake;
+      if(st.c_target) cTarget.value = st.c_target;
+      if(typeof st.c_sport !== "undefined") cSport.checked = st.c_sport;
+      if(typeof st.c_screen !== "undefined") cScreen.checked = st.c_screen;
+      if(st.c_schedule) cSchedule.value = st.c_schedule;
+      scheduleUI(cSchedule, cDaysWrap);
+      if(Array.isArray(st.c_days)){
+        [...cDaysWrap.querySelectorAll(".day")].forEach(d=>{
+          d.classList.toggle("on", st.c_days.includes(d.dataset.day));
+        });
+      }
+
+      // chart
+      const hist = Array.isArray(st.history) ? st.history : [];
+      initChart(hist.length ? hist : [7.2, 6.8, 7.6]); // default demo
+    }
+
+    function snapshotState(){
+      return {
+        theme: document.body.classList.contains("light") ? "light" : "dark",
+        activeTab: document.querySelector(".tab.active")?.dataset.tab || "analysis",
+
+        a_sleep: aSleep.value,
+        a_wake: aWake.value,
+        a_tiredDays: aTiredDays.value,
+        a_sport: aSport.checked,
+        a_screen: aScreen.checked,
+        a_schedule: aSchedule.value,
+        a_days: getADays(),
+
+        c_wake: cWake.value,
+        c_target: cTarget.value,
+        c_sport: cSport.checked,
+        c_screen: cScreen.checked,
+        c_schedule: cSchedule.value,
+        c_days: getCDays()
+      };
+    }
+
+    document.getElementById("saveBtn").addEventListener("click", ()=>{
+      saveState(snapshotState());
+      // subtle UX confirmation
+      createSymbols(); // small visual refresh
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", ()=>{
+      localStorage.removeItem(LS_KEY);
+      location.reload();
+    });
+
+    themeBtn.addEventListener("click", ()=>{
+      const next = document.body.classList.contains("light") ? "dark" : "light";
+      setTheme(next);
+      saveState({ theme: next });
+      // update chart colors
+      const st = loadState();
+      initChart(Array.isArray(st.history) && st.history.length ? st.history : [7.2,6.8,7.6]);
+    });
+
+    // autosave on input (lightweight)
+    const autos = [aSleep,aWake,aTiredDays,aSport,aScreen,aSchedule,cWake,cTarget,cSport,cScreen,cSchedule];
+    autos.forEach(el=>{
+      el.addEventListener("change", ()=> saveState(snapshotState()));
+      el.addEventListener("input", ()=> saveState(snapshotState()));
+    });
+
+    // Also save when custom day toggled
+    aDaysWrap.addEventListener("click", ()=> saveState(snapshotState()));
+    cDaysWrap.addEventListener("click", ()=> saveState(snapshotState()));
+
+    applyState();
+  </script>
+</body>
+</html>
